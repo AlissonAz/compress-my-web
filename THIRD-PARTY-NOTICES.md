@@ -22,8 +22,7 @@ Este documento não substitui os textos integrais das respectivas licenças. As 
 
 Sites oficiais:
 
-- Avalonia: https://github.com/Avaloempacotador
-NSIS localniaUI/Avalonia
+- Avalonia: https://github.com/AvaloniaUI/Avalonia
 - CommunityToolkit: https://github.com/CommunityToolkit/dotnet
 - ImageSharp: https://github.com/SixLabors/ImageSharp
 - qpdf: https://github.com/qpdf/qpdf

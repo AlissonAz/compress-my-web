@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-APP_VERSION="1.4.0"
+APP_VERSION="1.4.1"
 QPDF_VERSION="12.3.2"
 GHOSTSCRIPT_VERSION="10.07.1"
 PUBLISH_DIR="dist/windows-x64"
