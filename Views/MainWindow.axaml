@@ -1,0 +1,195 @@
+<Window xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:CompressMyWeb.ViewModels" xmlns:models="using:CompressMyWeb.Models"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="1100" d:DesignHeight="760" x:Class="CompressMyWeb.Views.MainWindow"
+        x:DataType="vm:MainViewModel" Icon="/Assets/favcon CmW.png"
+        Title="Compress my Web — Compressão de arquivos" Width="1100" Height="760" MinWidth="900" MinHeight="650"
+        WindowStartupLocation="CenterScreen" Background="#F4F7F4" Foreground="#171A17">
+    <Window.Resources>
+        <SolidColorBrush x:Key="BrandGreenDark">#008F1F</SolidColorBrush>
+        <SolidColorBrush x:Key="BrandGreenSoft">#E8F8EC</SolidColorBrush>
+        <SolidColorBrush x:Key="BrandText">#171A17</SolidColorBrush>
+        <SolidColorBrush x:Key="BrandMutedText">#5E685F</SolidColorBrush>
+        <SolidColorBrush x:Key="BrandSurface">#FFFFFF</SolidColorBrush>
+        <SolidColorBrush x:Key="BrandSurfaceMuted">#F1F5F1</SolidColorBrush>
+        <SolidColorBrush x:Key="BrandBorder">#D5E1D7</SolidColorBrush>
+        <SolidColorBrush x:Key="BrandDanger">#C93636</SolidColorBrush>
+    </Window.Resources>
+    <Window.Styles>
+        <Style Selector="TextBlock"><Setter Property="Foreground" Value="{DynamicResource BrandText}"/></Style>
+        <Style Selector="Button">
+            <Setter Property="Foreground" Value="#000000"/><Setter Property="Background" Value="#D4D0C8"/>
+            <Setter Property="BorderBrush" Value="#808080"/>
+        </Style>
+        <Style Selector="Button.preset"><Setter Property="FontSize" Value="12"/><Setter Property="Padding" Value="12,7"/><Setter Property="CornerRadius" Value="6"/></Style>
+        <Style Selector="Border.card">
+            <Setter Property="Background" Value="{DynamicResource BrandSurface}"/><Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="Padding" Value="14"/><Setter Property="BorderBrush" Value="{DynamicResource BrandBorder}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+        </Style>
+        <Style Selector="TextBox, ComboBox, NumericUpDown">
+            <Setter Property="Background" Value="White"/><Setter Property="Foreground" Value="{DynamicResource BrandText}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource BrandBorder}"/>
+        </Style>
+    </Window.Styles>
+
+    <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,*,Auto" Margin="16">
+        <!-- IDENTIDADE -->
+        <Border Grid.Row="0" Classes="card" Background="{DynamicResource BrandGreenSoft}" Margin="0,0,0,10">
+            <Grid ColumnDefinitions="*,Auto">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Spacing="12">
+                    <Border Width="48" Height="48" CornerRadius="10" Background="White" Padding="4">
+                        <Image Source="/Assets/favcon CmW.png" Stretch="Uniform"/>
+                    </Border>
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="Compress my Web" FontSize="21" FontWeight="Bold"/>
+                        <TextBlock Text="Compressão de arquivos" FontSize="13" Foreground="{DynamicResource BrandMutedText}"/>
+                    </StackPanel>
+                </StackPanel>
+                <Button Grid.Column="1" Content="Sobre" VerticalAlignment="Center" Padding="16,7" Click="AboutButton_OnClick"/>
+            </Grid>
+        </Border>
+
+        <!-- PRESETS -->
+        <Border Grid.Row="1" Classes="card" Margin="0,0,0,10">
+            <Grid ColumnDefinitions="Auto,*">
+                <TextBlock Text="Presets" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,16,0"/>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
+                    <Button Classes="preset" Content="🌐 Web Ideal (80%)" Command="{Binding ApplyPresetCommand}" CommandParameter="Web" ToolTip.Tip="Padrão: 80% e até 1920x1080"/>
+                    <Button Classes="preset" Content="💎 Alta Qualidade (90%)" Command="{Binding ApplyPresetCommand}" CommandParameter="HighQuality"/>
+                    <Button Classes="preset" Content="🎯 Sem Perdas" Command="{Binding ApplyPresetCommand}" CommandParameter="Lossless"/>
+                    <Button Classes="preset" Content="📦 Máx. Compressão (60%)" Command="{Binding ApplyPresetCommand}" CommandParameter="MaxCompression"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- FORMATO DE SAÍDA -->
+        <Border Grid.Row="2" Classes="card" Margin="0,0,0,10">
+            <Grid ColumnDefinitions="Auto,260,*,Auto">
+                <TextBlock Text="Formato de saída" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,14,0"/>
+                <ComboBox Grid.Column="1" ItemsSource="{Binding OutputFormats}" SelectedValue="{Binding Settings.OutputFormat}"
+                          SelectedValueBinding="{Binding Value}" HorizontalAlignment="Stretch">
+                    <ComboBox.ItemTemplate><DataTemplate><TextBlock Text="{Binding Label}"/></DataTemplate></ComboBox.ItemTemplate>
+                </ComboBox>
+                <TextBlock Grid.Column="2" Text="PDF de entrada: somente compressão para outro PDF."
+                           IsVisible="{Binding Settings.IsPdfOutput}" FontSize="12"
+                           Foreground="{DynamicResource BrandMutedText}" VerticalAlignment="Center" Margin="14,0"/>
+                <Button Grid.Column="3" Content="⚙ Opções" Command="{Binding ToggleAdvancedSettingsCommand}"/>
+            </Grid>
+        </Border>
+
+        <!-- DESTINO -->
+        <Border Grid.Row="3" Classes="card" Margin="0,0,0,10">
+            <Grid ColumnDefinitions="Auto,*,Auto,Auto">
+                <TextBlock Text="Pasta de destino" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,14,0"/>
+                <TextBox Grid.Column="1" Text="{Binding Settings.OutputDirectory}" IsReadOnly="True" FontSize="12"/>
+                <Button Grid.Column="2" Content="📂 Alterar Pasta" Command="{Binding SelectOutputFolderCommand}" Margin="8,0,0,0"/>
+                <Button Grid.Column="3" Content="↗ Abrir Pasta" Command="{Binding OpenOutputFolderCommand}" Margin="8,0,0,0"/>
+            </Grid>
+        </Border>
+
+        <!-- OPÇÕES -->
+        <Border Grid.Row="4" Classes="card" IsVisible="{Binding ShowAdvancedSettings}" Margin="0,0,0,10" Background="{DynamicResource BrandSurfaceMuted}">
+            <Grid ColumnDefinitions="1.1*,1.3*,1.3*,1.2*">
+                <StackPanel Spacing="5" Margin="0,0,16,0">
+                    <TextBlock Text="Qualidade" FontWeight="SemiBold"/>
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Slider Minimum="1" Maximum="100" Value="{Binding Settings.Quality}" IsEnabled="{Binding Settings.SupportsQuality}"/>
+                        <TextBlock Grid.Column="1" Text="{Binding Settings.Quality, StringFormat='{}{0}%'}" FontWeight="Bold" Margin="8,0,0,0"/>
+                    </Grid>
+                    <CheckBox IsChecked="{Binding Settings.IsLossless}" Content="WebP sem perdas" IsEnabled="{Binding Settings.IsWebpOutput}"/>
+                </StackPanel>
+                <StackPanel Grid.Column="1" Spacing="5" Margin="0,0,16,0">
+                    <TextBlock Text="Redimensionamento" FontWeight="SemiBold"/><CheckBox IsChecked="{Binding Settings.EnableResize}" Content="Limitar resolução"/>
+                    <Grid ColumnDefinitions="*,8,*" IsEnabled="{Binding Settings.EnableResize}">
+                        <NumericUpDown Value="{Binding Settings.MaxWidth}" Minimum="100" Maximum="10000" FormatString="F0"/>
+                        <NumericUpDown Grid.Column="2" Value="{Binding Settings.MaxHeight}" Minimum="100" Maximum="10000" FormatString="F0"/>
+                    </Grid>
+                </StackPanel>
+                <StackPanel Grid.Column="2" Spacing="5" Margin="0,0,16,0">
+                    <TextBlock Text="Arquivos" FontWeight="SemiBold"/><TextBox Text="{Binding Settings.FileSuffix}" Watermark="Sufixo: _otimizada"/>
+                    <CheckBox IsChecked="{Binding Settings.PreserveFolderStructure}" Content="Preservar subpastas"/>
+                    <CheckBox IsChecked="{Binding Settings.StripMetadata}" Content="Remover metadados"/>
+                </StackPanel>
+                <StackPanel Grid.Column="3" Spacing="5">
+                    <TextBlock Text="Originais e PDF" FontWeight="SemiBold"/>
+                    <CheckBox IsChecked="{Binding Settings.DeleteOriginal}" Content="Excluir arquivo original"/>
+                    <CheckBox IsChecked="{Binding Settings.OptimizePdfImages}" Content="Recomprimir imagens do PDF"/>
+                    <TextBlock Text="O original é mantido por padrão." FontSize="11" Foreground="{DynamicResource BrandMutedText}"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- FILA -->
+        <Border Grid.Row="5" Classes="card" Margin="0,0,0,10">
+            <Grid RowDefinitions="Auto,*">
+                <Grid ColumnDefinitions="Auto,Auto,*,Auto" Margin="0,0,0,10">
+                    <Button Content="➕ Adicionar Arquivos" Command="{Binding AddFilesCommand}" IsEnabled="{Binding CanModifyQueue}" Margin="0,0,8,0"/>
+                    <Button Grid.Column="1" Content="📁 Adicionar Pasta" Command="{Binding AddFolderCommand}" IsEnabled="{Binding CanModifyQueue}"/>
+                    <TextBlock Grid.Column="2" Text="{Binding QueueItems.Count, StringFormat='{}{0} item(ns)'}" VerticalAlignment="Center"
+                               HorizontalAlignment="Right" Margin="0,0,12,0" Foreground="{DynamicResource BrandMutedText}"/>
+                    <Button Grid.Column="3" Content="🗑 Limpar Fila" Command="{Binding ClearQueueCommand}" IsEnabled="{Binding CanModifyQueue}"/>
+                </Grid>
+                <Grid Grid.Row="1">
+                    <Border IsVisible="{Binding !HasItems}" BorderBrush="#A9D8B4" BorderThickness="2" CornerRadius="8" Background="{DynamicResource BrandGreenSoft}">
+                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="8">
+                            <TextBlock Text="📥" FontSize="38" HorizontalAlignment="Center"/>
+                            <TextBlock Text="Arraste arquivos ou pastas aqui" FontSize="16" FontWeight="SemiBold"/>
+                            <TextBlock Text="PDF, JPG, PNG, BMP, TIFF, GIF e WebP" FontSize="12" Foreground="{DynamicResource BrandMutedText}"/>
+                        </StackPanel>
+                    </Border>
+                    <Grid IsVisible="{Binding HasItems}" RowDefinitions="Auto,*">
+                        <Border Background="{DynamicResource BrandSurfaceMuted}" CornerRadius="6" Padding="10,7">
+                            <Grid ColumnDefinitions="*,120,120,100,130,42">
+                                <TextBlock Text="Nome do arquivo" FontWeight="SemiBold"/>
+                                <TextBlock Grid.Column="1" Text="Original" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                                <TextBlock Grid.Column="2" Text="Saída" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                                <TextBlock Grid.Column="3" Text="Redução" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                                <TextBlock Grid.Column="4" Text="Formato de saída" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                            </Grid>
+                        </Border>
+                        <ListBox Grid.Row="1" ItemsSource="{Binding QueueItems}" Background="Transparent" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                            <ListBox.ItemTemplate><DataTemplate DataType="models:ImageQueueItem">
+                                <Border Margin="0,2" Padding="10,8" CornerRadius="6" Background="{DynamicResource BrandSurfaceMuted}">
+                                    <Grid ColumnDefinitions="*,120,120,100,130,42">
+                                        <StackPanel><TextBlock Text="{Binding FileName}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
+                                            <TextBlock Text="{Binding StatusText}" FontSize="11" Foreground="{DynamicResource BrandMutedText}"/>
+                                            <TextBlock Text="{Binding ErrorMessage}" FontSize="11" Foreground="{DynamicResource BrandDanger}" IsVisible="{Binding IsError}"/>
+                                        </StackPanel>
+                                        <TextBlock Grid.Column="1" Text="{Binding OriginalSizeFormatted}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                        <TextBlock Grid.Column="2" Text="{Binding NewSizeFormatted}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                        <TextBlock Grid.Column="3" Text="{Binding ReductionPercentage}" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="Bold" Foreground="{DynamicResource BrandGreenDark}"/>
+                                        <TextBlock Grid.Column="4" Text="{Binding OutputFormatDisplay}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                        <Button Grid.Column="5" Content="✕" Command="{Binding $parent[Window].((vm:MainViewModel)DataContext).RemoveItemCommand}" CommandParameter="{Binding}"/>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate></ListBox.ItemTemplate>
+                        </ListBox>
+                    </Grid>
+                </Grid>
+            </Grid>
+        </Border>
+
+        <!-- RODAPÉ -->
+        <Border Grid.Row="6" Classes="card">
+            <Grid ColumnDefinitions="*,Auto,16,Auto">
+                <StackPanel VerticalAlignment="Center" Spacing="4">
+                    <Grid ColumnDefinitions="*,Auto"><TextBlock Text="{Binding StatusMessage}" FontSize="13" FontWeight="Medium" TextTrimming="CharacterEllipsis"/>
+                        <TextBlock Grid.Column="1" Text="{Binding OverallProgress, StringFormat='{}{0:F0}%'}" FontWeight="Bold" IsVisible="{Binding IsProcessing}"/>
+                    </Grid>
+                    <ProgressBar Minimum="0" Maximum="100" Value="{Binding OverallProgress}" Height="8" CornerRadius="4"/>
+                </StackPanel>
+                <StackPanel Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="16,0,0,0">
+                    <TextBlock Text="Economia Total:" FontSize="11" Foreground="{DynamicResource BrandMutedText}" HorizontalAlignment="Right"/>
+                    <StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Text="{Binding TotalSavedFormatted}" FontWeight="Bold" FontSize="15" Foreground="{DynamicResource BrandGreenDark}"/>
+                        <TextBlock Text="{Binding TotalReductionPercentage, StringFormat='({0})'}" FontWeight="Bold" FontSize="14" Foreground="{DynamicResource BrandGreenDark}"/>
+                    </StackPanel>
+                </StackPanel>
+                <StackPanel Grid.Column="3" VerticalAlignment="Center">
+                    <Button Content="⚡ Iniciar Compressão" Command="{Binding StartConversionCommand}" IsEnabled="{Binding CanStart}" IsVisible="{Binding !IsProcessing}" FontWeight="Bold" Padding="20,12" CornerRadius="8" FontSize="14"/>
+                    <Button Content="⏹ Cancelar" Command="{Binding CancelConversionCommand}" IsVisible="{Binding IsProcessing}" FontWeight="Bold" Padding="20,12" CornerRadius="8" FontSize="14"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

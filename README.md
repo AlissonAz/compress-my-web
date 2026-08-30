@@ -1,0 +1,60 @@
+# Compress my Web
+
+Aplicativo desktop gratuito para comprimir e converter imagens e arquivos PDF localmente, sem envio de arquivos para servidores externos.
+
+## Recursos
+
+- Conversão de imagens para WebP, JPEG, PNG e PDF.
+- Compressão estrutural e agressiva de PDFs.
+- Processamento em lote de arquivos e pastas.
+- Presets de qualidade, redimensionamento e remoção de metadados.
+- Processamento local, sem telemetria.
+
+## Requisitos
+
+- Linux x64 ou Windows x64.
+- `qpdf` e `Ghostscript` para compressão de PDFs.
+- O SDK .NET 8 é necessário somente para compilar o código-fonte.
+
+## Compilar
+
+```bash
+dotnet restore
+dotnet build
+dotnet run
+```
+
+Pacote Debian:
+
+```bash
+bash build-deb.sh
+```
+
+Instalador Windows, com NSIS disponível:
+
+```bash
+bash build-windows.sh
+```
+
+## Privacidade
+
+O processamento é realizado integralmente no computador do usuário. O aplicativo não possui telemetria e não envia arquivos ou estatísticas pela internet.
+
+## Licença
+
+Compress my Web é software livre distribuído sob a GNU Affero General Public License, versão 3 ou posterior (`AGPL-3.0-or-later`). Consulte [LICENSE](LICENSE).
+
+Copyright © 2026 Alisson Azevedo.
+
+## Dependências
+
+As dependências mantêm suas próprias licenças. Consulte [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).
+
+## Apoie o projeto
+
+O aplicativo continuará gratuito. Doações são opcionais e não concedem recursos exclusivos. Os canais oficiais de apoio serão informados no repositório público do projeto.
+
+## Segurança
+
+Consulte [SECURITY.md](SECURITY.md) antes de comunicar uma vulnerabilidade.
+

@@ -1,0 +1,40 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="CompressMyWeb.Views.AboutWindow"
+        Icon="/Assets/favcon CmW.png"
+        Title="Sobre o Compress my Web"
+        Width="520" Height="455"
+        CanResize="False"
+        WindowStartupLocation="CenterOwner"
+        Background="#F4F7F4"
+        Foreground="#171A17">
+    <Border Margin="18" Padding="20" Background="White" BorderBrush="#D5E1D7" BorderThickness="1" CornerRadius="10">
+        <Grid RowDefinitions="Auto,Auto,Auto,Auto,*,Auto">
+            <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="14">
+                <Border Width="64" Height="64" Background="#E8F8EC" CornerRadius="12" Padding="5">
+                    <Image Source="/Assets/favcon CmW.png" Stretch="Uniform"/>
+                </Border>
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Text="Compress my Web" FontSize="22" FontWeight="Bold"/>
+                    <TextBlock x:Name="VersionText" FontSize="13" Foreground="#5E685F"/>
+                </StackPanel>
+            </StackPanel>
+
+            <TextBlock Grid.Row="1" Margin="0,18,0,0" Text="Compressão e conversão local de imagens e PDFs." FontSize="14"/>
+            <TextBlock Grid.Row="2" Margin="0,14,0,0" TextWrapping="Wrap"
+                       Text="Software livre distribuído sob GNU AGPL-3.0-or-later. Copyright © 2026 Alisson Azevedo."/>
+            <TextBlock Grid.Row="3" Margin="0,14,0,0" TextWrapping="Wrap" Foreground="#5E685F"
+                       Text="Sem telemetria: seus arquivos permanecem no seu computador. Dependências de terceiros mantêm suas respectivas licenças."/>
+
+            <StackPanel Grid.Row="4" Margin="0,18,0,0" Spacing="5">
+                <TextBlock Text="Código-fonte" FontWeight="SemiBold"/>
+                <TextBlock Text="O endereço será publicado junto à primeira release pública." Foreground="#5E685F"/>
+                <TextBlock Margin="0,8,0,0" Text="Doações" FontWeight="SemiBold"/>
+                <TextBlock Text="O apoio é opcional e não bloqueia nenhuma funcionalidade." Foreground="#5E685F"/>
+            </StackPanel>
+
+            <Button Grid.Row="5" Content="Fechar" HorizontalAlignment="Right" Padding="22,8" Click="CloseButton_OnClick"/>
+        </Grid>
+    </Border>
+</Window>
+
