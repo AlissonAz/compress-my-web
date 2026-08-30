@@ -3,7 +3,7 @@ set -e
 
 APP_NAME="compressmyweb"
 DISPLAY_NAME="CompressMyWeb"
-VERSION="1.5.0"
+VERSION="1.5.1"
 ARCH="amd64"
 OUTPUT_DIR="dist"
 BUILD_ROOT="${OUTPUT_DIR}/deb-build"

@@ -29,8 +29,11 @@
             <StackPanel Grid.Row="4" Margin="0,18,0,0" Spacing="5">
                 <TextBlock Text="Código-fonte" FontWeight="SemiBold"/>
                 <TextBlock Text="github.com/AlissonAz/compress-my-web" Foreground="#5E685F"/>
+                <TextBlock Margin="0,8,0,0" Text="Contato" FontWeight="SemiBold"/>
+                <TextBlock Text="alissonazevedom@gmail.com" Foreground="#5E685F"/>
                 <TextBlock Margin="0,8,0,0" Text="Doações" FontWeight="SemiBold"/>
                 <TextBlock Text="O apoio é opcional e não bloqueia nenhuma funcionalidade." Foreground="#5E685F"/>
+                <TextBlock Text="Chave Pix (e-mail): alissonazevedom@gmail.com" Foreground="#5E685F"/>
             </StackPanel>
 
             <Button Grid.Row="5" Content="Fechar" HorizontalAlignment="Right" Padding="22,8" Click="CloseButton_OnClick"/>
