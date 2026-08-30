@@ -140,6 +140,8 @@ public sealed class PdfCompressionService : IPdfCompressionService
                 CreateNoWindow = true
             };
 
+            ConfigureBundledQpdf(startInfo);
+
             startInfo.ArgumentList.Add(qpdfInputPath);
             startInfo.ArgumentList.Add("--compress-streams=y");
             startInfo.ArgumentList.Add("--decode-level=generalized");
@@ -331,23 +333,51 @@ public sealed class PdfCompressionService : IPdfCompressionService
         string? configuredPath = Environment.GetEnvironmentVariable("COMPRESSMYWEB_QPDF_PATH");
         if (!string.IsNullOrWhiteSpace(configuredPath)) return configuredPath;
 
-        string bundledPath = Path.Combine(AppContext.BaseDirectory, "tools", "qpdf", "bin", "qpdf.exe");
-        return OperatingSystem.IsWindows() && File.Exists(bundledPath) ? bundledPath : "qpdf";
+        string bundledName = OperatingSystem.IsWindows() ? "qpdf.exe" : "qpdf";
+        string bundledPath = Path.Combine(AppContext.BaseDirectory, "tools", "qpdf", "bin", bundledName);
+        return File.Exists(bundledPath) ? bundledPath : "qpdf";
     }
 
     private static void ConfigureBundledGhostscript(ProcessStartInfo startInfo)
     {
-        if (!OperatingSystem.IsWindows()) return;
-
         string root = Path.Combine(AppContext.BaseDirectory, "tools", "ghostscript");
-        string executable = Path.Combine(root, "bin", "gswin64c.exe");
+        string executableName = OperatingSystem.IsWindows() ? "gswin64c.exe" : "gs";
+        string executable = Path.Combine(root, "bin", executableName);
         if (!string.Equals(startInfo.FileName, executable, StringComparison.OrdinalIgnoreCase)) return;
 
-        startInfo.Environment["GS_LIB"] = string.Join(Path.PathSeparator,
+        string[] searchPaths =
+        [
             Path.Combine(root, "Resource", "Init"),
             Path.Combine(root, "Resource"),
             Path.Combine(root, "lib"),
-            Path.Combine(root, "fonts"));
+            Path.Combine(root, "fonts")
+        ];
+        startInfo.Environment["GS_LIB"] = string.Join(Path.PathSeparator, searchPaths);
+
+        string nativeLibraryPath = Path.Combine(root, "lib");
+        string existingLibraryPath = startInfo.Environment.TryGetValue("LD_LIBRARY_PATH", out string? value)
+            ? value ?? string.Empty
+            : string.Empty;
+        startInfo.Environment["LD_LIBRARY_PATH"] = string.IsNullOrWhiteSpace(existingLibraryPath)
+            ? nativeLibraryPath
+            : nativeLibraryPath + Path.PathSeparator + existingLibraryPath;
+    }
+
+    private static void ConfigureBundledQpdf(ProcessStartInfo startInfo)
+    {
+        if (OperatingSystem.IsWindows()) return;
+
+        string root = Path.Combine(AppContext.BaseDirectory, "tools", "qpdf");
+        string executable = Path.Combine(root, "bin", "qpdf");
+        if (!string.Equals(startInfo.FileName, executable, StringComparison.Ordinal)) return;
+
+        string nativeLibraryPath = Path.Combine(root, "lib");
+        string existingLibraryPath = startInfo.Environment.TryGetValue("LD_LIBRARY_PATH", out string? value)
+            ? value ?? string.Empty
+            : string.Empty;
+        startInfo.Environment["LD_LIBRARY_PATH"] = string.IsNullOrWhiteSpace(existingLibraryPath)
+            ? nativeLibraryPath
+            : nativeLibraryPath + Path.PathSeparator + existingLibraryPath;
     }
 
     private static string FindGhostscriptExecutable()
@@ -355,8 +385,9 @@ public sealed class PdfCompressionService : IPdfCompressionService
         string? configuredPath = Environment.GetEnvironmentVariable("COMPRESSMYWEB_GHOSTSCRIPT_PATH");
         if (!string.IsNullOrWhiteSpace(configuredPath)) return configuredPath;
 
-        string bundledPath = Path.Combine(AppContext.BaseDirectory, "tools", "ghostscript", "bin", "gswin64c.exe");
-        if (OperatingSystem.IsWindows() && File.Exists(bundledPath)) return bundledPath;
+        string bundledName = OperatingSystem.IsWindows() ? "gswin64c.exe" : "gs";
+        string bundledPath = Path.Combine(AppContext.BaseDirectory, "tools", "ghostscript", "bin", bundledName);
+        if (File.Exists(bundledPath)) return bundledPath;
 
         return OperatingSystem.IsWindows() ? "gswin64c.exe" : "gs";
     }

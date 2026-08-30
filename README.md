@@ -31,6 +31,15 @@ Pacote Debian:
 bash build-deb.sh
 ```
 
+Pacote Debian offline (qpdf e Ghostscript incluídos):
+
+```bash
+dotnet restore -r linux-x64
+bash build-deb-offline.sh
+```
+
+O pacote offline é destinado a Linux amd64 e ainda requer apenas as bibliotecas básicas do sistema (`libc6`, `libgcc-s1` e `libstdc++6`).
+
 Instalador Windows offline, com `curl`, `7z` e NSIS disponíveis no ambiente de compilação:
 
 ```bash
