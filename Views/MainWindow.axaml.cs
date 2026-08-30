@@ -16,7 +16,7 @@ public partial class MainWindow : Window
 
     private void OnDragOver(object? sender, DragEventArgs e)
     {
-        if (e.Data.Contains(DataFormats.Files))
+        if (e.DataTransfer.Formats.Contains(DataFormat.File))
         {
             e.DragEffects = DragDropEffects.Copy;
         }
@@ -28,9 +28,9 @@ public partial class MainWindow : Window
 
     private void OnDrop(object? sender, DragEventArgs e)
     {
-        if (e.Data.Contains(DataFormats.Files))
+        if (e.DataTransfer.Formats.Contains(DataFormat.File))
         {
-            var files = e.Data.GetFiles();
+            var files = e.DataTransfer.TryGetFiles();
             if (files != null)
             {
                 var paths = files.Select(f => f.Path.LocalPath).ToList();

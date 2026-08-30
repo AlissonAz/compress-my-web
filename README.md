@@ -13,7 +13,8 @@ Aplicativo desktop gratuito para comprimir e converter imagens e arquivos PDF lo
 ## Requisitos
 
 - Linux x64 ou Windows x64.
-- `qpdf` e `Ghostscript` para compressão de PDFs.
+- No Windows, qpdf e Ghostscript já estão incluídos no instalador offline.
+- No Linux, instale os pacotes `qpdf` e `ghostscript` da distribuição.
 - O SDK .NET 8 é necessário somente para compilar o código-fonte.
 
 ## Compilar
@@ -30,11 +31,13 @@ Pacote Debian:
 bash build-deb.sh
 ```
 
-Instalador Windows, com NSIS disponível:
+Instalador Windows offline, com `curl`, `7z` e NSIS disponíveis no ambiente de compilação:
 
 ```bash
 bash build-windows.sh
 ```
+
+O script baixa versões fixadas do qpdf e Ghostscript, confere seus SHA-256 oficiais e inclui as dependências no instalador. Depois do primeiro build, os downloads ficam no cache local.
 
 ## Privacidade
 
@@ -57,4 +60,3 @@ O aplicativo continuará gratuito. Doações são opcionais e não concedem recu
 ## Segurança
 
 Consulte [SECURITY.md](SECURITY.md) antes de comunicar uma vulnerabilidade.
-

@@ -9,7 +9,7 @@ public partial class AboutWindow : Window
     public AboutWindow()
     {
         InitializeComponent();
-        string version = Assembly.GetExecutingAssembly().GetName().Version?.ToString(3) ?? "1.3.0";
+        string version = Assembly.GetExecutingAssembly().GetName().Version?.ToString(3) ?? "1.4.0";
         VersionText.Text = $"Versão {version}";
     }
 
@@ -18,4 +18,3 @@ public partial class AboutWindow : Window
         Close();
     }
 }
-

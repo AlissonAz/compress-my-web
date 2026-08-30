@@ -267,6 +267,8 @@ public sealed class PdfCompressionService : IPdfCompressionService
             CreateNoWindow = true
         };
 
+        ConfigureBundledGhostscript(startInfo);
+
         string[] arguments =
         [
             "-q", "-dBATCH", "-dNOPAUSE", "-dSAFER",
@@ -327,13 +329,35 @@ public sealed class PdfCompressionService : IPdfCompressionService
     private static string FindQpdfExecutable()
     {
         string? configuredPath = Environment.GetEnvironmentVariable("COMPRESSMYWEB_QPDF_PATH");
-        return string.IsNullOrWhiteSpace(configuredPath) ? "qpdf" : configuredPath;
+        if (!string.IsNullOrWhiteSpace(configuredPath)) return configuredPath;
+
+        string bundledPath = Path.Combine(AppContext.BaseDirectory, "tools", "qpdf", "bin", "qpdf.exe");
+        return OperatingSystem.IsWindows() && File.Exists(bundledPath) ? bundledPath : "qpdf";
+    }
+
+    private static void ConfigureBundledGhostscript(ProcessStartInfo startInfo)
+    {
+        if (!OperatingSystem.IsWindows()) return;
+
+        string root = Path.Combine(AppContext.BaseDirectory, "tools", "ghostscript");
+        string executable = Path.Combine(root, "bin", "gswin64c.exe");
+        if (!string.Equals(startInfo.FileName, executable, StringComparison.OrdinalIgnoreCase)) return;
+
+        startInfo.Environment["GS_LIB"] = string.Join(Path.PathSeparator,
+            Path.Combine(root, "Resource", "Init"),
+            Path.Combine(root, "Resource"),
+            Path.Combine(root, "lib"),
+            Path.Combine(root, "fonts"));
     }
 
     private static string FindGhostscriptExecutable()
     {
         string? configuredPath = Environment.GetEnvironmentVariable("COMPRESSMYWEB_GHOSTSCRIPT_PATH");
         if (!string.IsNullOrWhiteSpace(configuredPath)) return configuredPath;
+
+        string bundledPath = Path.Combine(AppContext.BaseDirectory, "tools", "ghostscript", "bin", "gswin64c.exe");
+        if (OperatingSystem.IsWindows() && File.Exists(bundledPath)) return bundledPath;
+
         return OperatingSystem.IsWindows() ? "gswin64c.exe" : "gs";
     }
 

@@ -28,7 +28,7 @@
 
             <StackPanel Grid.Row="4" Margin="0,18,0,0" Spacing="5">
                 <TextBlock Text="Código-fonte" FontWeight="SemiBold"/>
-                <TextBlock Text="O endereço será publicado junto à primeira release pública." Foreground="#5E685F"/>
+                <TextBlock Text="github.com/AlissonAz/compress-my-web" Foreground="#5E685F"/>
                 <TextBlock Margin="0,8,0,0" Text="Doações" FontWeight="SemiBold"/>
                 <TextBlock Text="O apoio é opcional e não bloqueia nenhuma funcionalidade." Foreground="#5E685F"/>
             </StackPanel>
@@ -37,4 +37,3 @@
         </Grid>
     </Border>
 </Window>
-

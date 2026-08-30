@@ -1,9 +1,10 @@
 Unicode True
 !include "MUI2.nsh"
+!include "LogicLib.nsh"
 
 !define APP_NAME "Compress my Web"
 !define APP_EXE "CompressMyWeb.exe"
-!define APP_VERSION "1.3.0"
+!define APP_VERSION "1.4.0"
 !define COMPANY_NAME "Alisson Azevedo"
 
 Name "${APP_NAME}"
@@ -14,7 +15,7 @@ RequestExecutionLevel admin
 SetCompressor /SOLID lzma
 Icon "Assets\favcon-CmW.ico"
 UninstallIcon "Assets\favcon-CmW.ico"
-VIProductVersion "1.3.0.0"
+VIProductVersion "1.4.0.0"
 VIAddVersionKey "ProductName" "${APP_NAME}"
 VIAddVersionKey "CompanyName" "${COMPANY_NAME}"
 VIAddVersionKey "LegalCopyright" "Copyright © 2026 Alisson Azevedo"
@@ -40,6 +41,26 @@ Section "Aplicativo" SecMain
     SetOutPath "$INSTDIR"
     File /r "dist\windows-x64\*.*"
 
+    SetOutPath "$INSTDIR\tools\qpdf"
+    File /r "dist\windows-dependencies\qpdf\*.*"
+
+    SetOutPath "$INSTDIR\tools\ghostscript"
+    File /r "dist\windows-dependencies\ghostscript\*.*"
+
+    SetOutPath "$INSTDIR\sources"
+    File "dist\windows-dependencies\sources\ghostscript-10.07.1.tar.xz"
+    File "dist\windows-dependencies\sources\compress-my-web-1.4.0.tar.gz"
+
+    SetOutPath "$INSTDIR"
+
+    DetailPrint "Preparando componentes para compressão de PDF..."
+    ExecWait '"$INSTDIR\tools\ghostscript\vcredist_x64.exe" /install /quiet /norestart' $0
+    ${If} $0 != 0
+    ${AndIf} $0 != 1638
+    ${AndIf} $0 != 3010
+        MessageBox MB_OK|MB_ICONEXCLAMATION "Não foi possível preparar o componente Microsoft Visual C++ (código $0). A instalação continuará, mas a compressão de PDF pode exigir reparo do componente."
+    ${EndIf}
+
     WriteUninstaller "$INSTDIR\Desinstalar.exe"
     WriteRegStr HKLM "Software\CompressMyWeb" "InstallDir" "$INSTDIR"
     WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\CompressMyWeb" "DisplayName" "${APP_NAME}"
@@ -53,14 +74,6 @@ Section "Aplicativo" SecMain
     CreateShortcut "$SMPROGRAMS\CompressMyWeb\Desinstalar.lnk" "$INSTDIR\Desinstalar.exe"
     CreateShortcut "$DESKTOP\Compress my Web.lnk" "$INSTDIR\${APP_EXE}"
 
-    SearchPath $0 "qpdf.exe"
-    SearchPath $1 "gswin64c.exe"
-    StrCmp $0 "" DependenciesMissing
-    StrCmp $1 "" DependenciesMissing DependenciesReady
-
-DependenciesMissing:
-    MessageBox MB_OK|MB_ICONINFORMATION "O aplicativo foi instalado. Para comprimir PDFs, instale também qpdf e Ghostscript e adicione-os ao PATH do Windows. A conversão de imagens funciona normalmente sem esses componentes."
-DependenciesReady:
 SectionEnd
 
 Section "Uninstall"
