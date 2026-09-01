@@ -1,6 +1,8 @@
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Platform.Storage;
+using Avalonia.Layout;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -65,6 +67,71 @@ public class AvaloniaDialogService : IDialogService
         var results = await storage.OpenFolderPickerAsync(options);
         var folder = results.FirstOrDefault();
         return folder?.Path.LocalPath;
+    }
+
+    public async Task ShowMessageAsync(string title, string message)
+    {
+        await ShowNotificationAsync(title, "✓ Concluído com sucesso", message, Avalonia.Media.Brushes.ForestGreen);
+    }
+
+    public async Task ShowErrorAsync(string title, string message)
+    {
+        await ShowNotificationAsync(title, "⚠ Não foi possível concluir", message, Avalonia.Media.Brushes.Firebrick);
+    }
+
+    private static async Task ShowNotificationAsync(string title, string heading, string message, Avalonia.Media.IBrush headingBrush)
+    {
+        var dialog = new Window
+        {
+            Title = title,
+            Width = 440,
+            Height = 210,
+            CanResize = false,
+            WindowStartupLocation = WindowStartupLocation.CenterOwner,
+            Background = Avalonia.Media.Brushes.White,
+            Content = new Border
+            {
+                Margin = new Thickness(18),
+                Padding = new Thickness(20),
+                BorderBrush = Avalonia.Media.Brushes.LightGray,
+                BorderThickness = new Thickness(1),
+                CornerRadius = new CornerRadius(10),
+                Child = CreateMessageContent(heading, message, headingBrush, out var closeButton)
+            }
+        };
+
+        closeButton.Click += (_, _) => dialog.Close();
+        var owner = (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow;
+        if (owner is not null)
+        {
+            await dialog.ShowDialog(owner);
+        }
+        else
+        {
+            dialog.Show();
+        }
+    }
+
+    private static StackPanel CreateMessageContent(string heading, string message, Avalonia.Media.IBrush headingBrush, out Button closeButton)
+    {
+        closeButton = new Button
+        {
+            Content = "Fechar",
+            Padding = new Thickness(20, 8),
+            HorizontalAlignment = HorizontalAlignment.Right
+        };
+
+        var panel = new StackPanel { Spacing = 14 };
+        panel.Children.Add(new TextBlock
+        {
+            Text = heading,
+            FontSize = 19,
+            FontWeight = Avalonia.Media.FontWeight.Bold,
+            Foreground = headingBrush
+        });
+        panel.Children.Add(new TextBlock { Text = message, TextWrapping = Avalonia.Media.TextWrapping.Wrap });
+        panel.Children.Add(closeButton);
+        return panel;
     }
 
     public void OpenFolderInExplorer(string folderPath)

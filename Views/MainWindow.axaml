@@ -33,11 +33,183 @@
         </Style>
     </Window.Styles>
 
-    <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,*,Auto" Margin="16">
+    <Grid>
+        <!-- TELA INICIAL -->
+        <Grid IsVisible="{Binding IsHome}" Margin="32" HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="760">
+            <Border Classes="card" Padding="42" Background="{DynamicResource BrandSurface}">
+                <StackPanel Spacing="28">
+                    <StackPanel HorizontalAlignment="Center" Spacing="10">
+                        <Border Width="110" Height="110" CornerRadius="24" Background="{DynamicResource BrandGreenSoft}" Padding="12">
+                            <Image Source="/Assets/favcon CmW.png" Stretch="Uniform"/>
+                        </Border>
+                        <TextBlock Text="Compress my Web" FontSize="30" FontWeight="Bold" HorizontalAlignment="Center"/>
+                        <TextBlock Text="Ferramentas locais para imagens e PDFs" FontSize="15" Foreground="{DynamicResource BrandMutedText}" HorizontalAlignment="Center"/>
+                    </StackPanel>
+
+                    <UniformGrid Columns="2" Rows="2" Width="668" HorizontalAlignment="Center">
+                        <Button Command="{Binding NavigateToCommand}" CommandParameter="Compress" Width="320" Height="180" Margin="7" Padding="18" CornerRadius="12">
+                            <StackPanel Spacing="8" VerticalAlignment="Center">
+                                <Canvas Width="64" Height="52" HorizontalAlignment="Center">
+                                    <Border Canvas.Left="12" Canvas.Top="8" Width="32" Height="39" CornerRadius="3" Background="#FFFFFF" BorderBrush="#008F1F" BorderThickness="2"/>
+                                    <Border Canvas.Left="19" Canvas.Top="3" Width="32" Height="39" CornerRadius="3" Background="#E8F8EC" BorderBrush="#008F1F" BorderThickness="2"/>
+                                    <TextBlock Canvas.Left="0" Canvas.Top="0" Text="↘" FontSize="20" FontWeight="Bold" Foreground="#008F1F"/>
+                                    <TextBlock Canvas.Left="43" Canvas.Top="0" Text="↙" FontSize="20" FontWeight="Bold" Foreground="#008F1F"/>
+                                    <TextBlock Canvas.Left="0" Canvas.Top="27" Text="↗" FontSize="20" FontWeight="Bold" Foreground="#008F1F"/>
+                                    <TextBlock Canvas.Left="43" Canvas.Top="27" Text="↖" FontSize="20" FontWeight="Bold" Foreground="#008F1F"/>
+                                </Canvas>
+                                <TextBlock Text="Comprimir" FontSize="17" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                                <TextBlock Text="Reduza o tamanho de imagens e PDFs" FontSize="12" HorizontalAlignment="Center" TextWrapping="Wrap"/>
+                            </StackPanel>
+                        </Button>
+                        <Button Command="{Binding NavigateToCommand}" CommandParameter="Convert" Width="320" Height="180" Margin="7" Padding="18" CornerRadius="12">
+                            <StackPanel Spacing="8" VerticalAlignment="Center"><Border Height="52"><TextBlock Text="🔄" FontSize="34" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border><TextBlock Text="Converter" FontSize="17" FontWeight="SemiBold" HorizontalAlignment="Center"/><TextBlock Text="Altere o formato dos seus arquivos" FontSize="12" HorizontalAlignment="Center" TextWrapping="Wrap"/></StackPanel>
+                        </Button>
+                        <Button Command="{Binding NavigateToCommand}" CommandParameter="MergePdf" Width="320" Height="180" Margin="7" Padding="18" CornerRadius="12">
+                            <StackPanel Spacing="8" VerticalAlignment="Center"><Border Height="52"><TextBlock Text="📑" FontSize="34" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border><TextBlock Text="Unir PDF" FontSize="17" FontWeight="SemiBold" HorizontalAlignment="Center"/><TextBlock Text="Junte vários PDFs em um só arquivo" FontSize="12" HorizontalAlignment="Center" TextWrapping="Wrap"/></StackPanel>
+                        </Button>
+                        <Button Command="{Binding NavigateToCommand}" CommandParameter="SplitPdf" Width="320" Height="180" Margin="7" Padding="18" CornerRadius="12">
+                            <StackPanel Spacing="8" VerticalAlignment="Center"><Border Height="52"><TextBlock Text="✂️" FontSize="34" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border><TextBlock Text="Dividir PDF" FontSize="17" FontWeight="SemiBold" HorizontalAlignment="Center"/><TextBlock Text="Separe páginas ou intervalos de um PDF" FontSize="12" HorizontalAlignment="Center" TextWrapping="Wrap"/></StackPanel>
+                        </Button>
+                    </UniformGrid>
+                    <TextBlock Text="Seus arquivos são processados no seu computador." HorizontalAlignment="Center" Foreground="{DynamicResource BrandMutedText}" FontSize="12"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <!-- UNIR PDF -->
+        <Grid IsVisible="{Binding IsMergePage}" RowDefinitions="Auto,Auto,*,Auto" Margin="24">
+            <Border Grid.Row="0" Classes="card" Background="{DynamicResource BrandGreenSoft}" Margin="0,0,0,12">
+                <Grid ColumnDefinitions="Auto,*,Auto">
+                    <Button Content="← Início" Command="{Binding GoHomeCommand}" IsEnabled="{Binding !IsMerging}" VerticalAlignment="Center" Padding="12,7"/>
+                    <StackPanel Grid.Column="1" Margin="16,0" VerticalAlignment="Center">
+                        <TextBlock Text="Unir PDF" FontSize="23" FontWeight="Bold"/>
+                        <TextBlock Text="Organize os arquivos na ordem em que as páginas devem aparecer." FontSize="13" Foreground="{DynamicResource BrandMutedText}"/>
+                    </StackPanel>
+                    <Image Grid.Column="2" Source="/Assets/favcon CmW.png" Width="48" Height="48" Stretch="Uniform"/>
+                </Grid>
+            </Border>
+
+            <Border Grid.Row="1" Classes="card" Margin="0,0,0,12">
+                <Grid ColumnDefinitions="Auto,Auto,*,Auto">
+                    <Button Content="➕ Adicionar PDFs" Command="{Binding AddMergeFilesCommand}" IsEnabled="{Binding !IsMerging}" Margin="0,0,8,0"/>
+                    <TextBlock Grid.Column="1" Text="{Binding MergeItems.Count, StringFormat='{}{0} arquivo(s)'}" VerticalAlignment="Center" Foreground="{DynamicResource BrandMutedText}"/>
+                    <Button Grid.Column="3" Content="🗑 Remover todos" Command="{Binding ClearMergeItemsCommand}" IsEnabled="{Binding !IsMerging}"/>
+                </Grid>
+            </Border>
+
+            <Border Grid.Row="2" Classes="card" Margin="0,0,0,12">
+                <Grid RowDefinitions="Auto,*">
+                    <Border Background="{DynamicResource BrandSurfaceMuted}" CornerRadius="6" Padding="10,7">
+                        <Grid ColumnDefinitions="50,*,110,150"><TextBlock Text="#" FontWeight="SemiBold" HorizontalAlignment="Center"/><TextBlock Grid.Column="1" Text="Arquivo" FontWeight="SemiBold"/><TextBlock Grid.Column="2" Text="Tamanho" FontWeight="SemiBold" HorizontalAlignment="Center"/></Grid>
+                    </Border>
+                    <Grid Grid.Row="1">
+                        <StackPanel IsVisible="{Binding MergeIsEmpty}" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="8">
+                            <TextBlock Text="📑" FontSize="38" HorizontalAlignment="Center"/>
+                            <TextBlock Text="Adicione dois ou mais PDFs para começar" FontSize="15" FontWeight="SemiBold"/>
+                        </StackPanel>
+                        <ListBox ItemsSource="{Binding MergeItems}" IsVisible="{Binding MergeHasItems}" Background="Transparent" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                            <ListBox.ItemTemplate><DataTemplate DataType="models:PdfMergeItem">
+                                <Border Margin="0,2" Padding="10,8" CornerRadius="6" Background="{DynamicResource BrandSurfaceMuted}">
+                                    <Grid ColumnDefinitions="50,*,110,150">
+                                        <TextBlock Text="PDF" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        <TextBlock Grid.Column="1" Text="{Binding FileName}" FontWeight="SemiBold" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                                        <TextBlock Grid.Column="2" Text="{Binding SizeFormatted}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        <StackPanel Grid.Column="3" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="5">
+                                            <Button Content="↑" Command="{Binding $parent[Window].((vm:MainViewModel)DataContext).MoveMergeItemUpCommand}" CommandParameter="{Binding}"/>
+                                            <Button Content="↓" Command="{Binding $parent[Window].((vm:MainViewModel)DataContext).MoveMergeItemDownCommand}" CommandParameter="{Binding}"/>
+                                            <Button Content="✕" Command="{Binding $parent[Window].((vm:MainViewModel)DataContext).RemoveMergeItemCommand}" CommandParameter="{Binding}"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate></ListBox.ItemTemplate>
+                        </ListBox>
+                    </Grid>
+                </Grid>
+            </Border>
+
+            <Border Grid.Row="3" Classes="card">
+                <Grid ColumnDefinitions="Auto,*,Auto,Auto" RowDefinitions="Auto,Auto,Auto">
+                    <TextBlock Text="Destino" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,12,0"/>
+                    <TextBox Grid.Column="1" Text="{Binding MergeOutputDirectory}" IsReadOnly="True" FontSize="12"/>
+                    <Button Grid.Column="2" Content="📂 Alterar pasta" Command="{Binding SelectMergeOutputFolderCommand}" IsEnabled="{Binding !IsMerging}" Margin="8,0,0,0"/>
+                    <Button Grid.Column="3" Content="↗ Abrir" Command="{Binding OpenMergeOutputFolderCommand}" Margin="8,0,0,0"/>
+                    <TextBlock Grid.Row="1" Text="Nome" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,10,12,0"/>
+                    <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding MergeOutputFileName}" Watermark="Nome do PDF final" Margin="0,10,0,0" IsEnabled="{Binding !IsMerging}"/>
+                    <Button Grid.Row="1" Grid.Column="3" Content="📑 Unir PDFs" Command="{Binding MergePdfsCommand}" IsEnabled="{Binding CanMerge}" IsVisible="{Binding !IsMerging}" FontWeight="Bold" Margin="8,10,0,0" Padding="18,10"/>
+                    <Button Grid.Row="1" Grid.Column="3" Content="⏳ Unindo PDFs... (cancelar)" Command="{Binding CancelMergeCommand}" IsVisible="{Binding IsMerging}" FontWeight="Bold" Margin="8,10,0,0" Padding="18,10"/>
+                    <TextBlock Grid.Row="2" Grid.ColumnSpan="4" Text="{Binding MergeStatusMessage}" Foreground="{DynamicResource BrandMutedText}" Margin="0,10,0,0" TextWrapping="Wrap"/>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- DIVIDIR PDF -->
+        <Grid IsVisible="{Binding IsFeaturePlaceholder}" Margin="32" HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="620">
+            <Border Classes="card" Padding="36">
+                <Grid RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="16">
+                    <Grid ColumnDefinitions="Auto,*,Auto">
+                        <Button Content="← Início" Command="{Binding GoHomeCommand}" IsEnabled="{Binding !IsSplitting}" VerticalAlignment="Center" Padding="12,7"/>
+                        <StackPanel Grid.Column="1" Margin="16,0" VerticalAlignment="Center">
+                            <TextBlock Text="Dividir PDF" FontSize="23" FontWeight="Bold"/>
+                            <TextBlock Text="Crie um PDF separado para cada página." FontSize="13" Foreground="{DynamicResource BrandMutedText}"/>
+                        </StackPanel>
+                        <TextBlock Grid.Column="2" Text="✂️" FontSize="34" VerticalAlignment="Center"/>
+                    </Grid>
+
+                    <Border Grid.Row="1" Background="{DynamicResource BrandSurfaceMuted}" CornerRadius="8" Padding="14">
+                        <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
+                            <StackPanel>
+                                <TextBlock Text="PDF de origem" FontWeight="SemiBold"/>
+                                <TextBlock Text="{Binding SplitInputPath}" IsVisible="{Binding CanSplit}" TextTrimming="CharacterEllipsis" Foreground="{DynamicResource BrandMutedText}" Margin="0,4,0,0"/>
+                                <TextBlock Text="Nenhum arquivo selecionado" IsVisible="{Binding !CanSplit}" Foreground="{DynamicResource BrandMutedText}" Margin="0,4,0,0"/>
+                            </StackPanel>
+                            <Button Grid.Column="1" Content="📄 Selecionar PDF" Command="{Binding SelectSplitFileCommand}" IsEnabled="{Binding !IsSplitting}" VerticalAlignment="Center"/>
+                        </Grid>
+                    </Border>
+
+                    <StackPanel Grid.Row="2" Spacing="10">
+                        <Grid ColumnDefinitions="Auto,260,*">
+                            <TextBlock Text="Modo" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,12,0"/>
+                            <ComboBox Grid.Column="1" ItemsSource="{Binding SplitModes}" SelectedValue="{Binding SplitMode}" SelectedValueBinding="{Binding Value}" IsEnabled="{Binding !IsSplitting}">
+                                <ComboBox.ItemTemplate><DataTemplate><TextBlock Text="{Binding Label}"/></DataTemplate></ComboBox.ItemTemplate>
+                            </ComboBox>
+                            <TextBlock Grid.Column="2" Text="Escolha como as páginas serão agrupadas." VerticalAlignment="Center" Margin="12,0,0,0" FontSize="12" Foreground="{DynamicResource BrandMutedText}"/>
+                        </Grid>
+                        <StackPanel IsVisible="{Binding IsSplitByRanges}" Spacing="4">
+                            <TextBlock Text="Intervalos" FontWeight="SemiBold"/>
+                            <TextBox Text="{Binding SplitRanges}" Watermark="Ex.: 1-3,5,8-10" IsEnabled="{Binding !IsSplitting}"/>
+                            <TextBlock Text="Use vírgulas para separar os grupos. Cada grupo cria um PDF; páginas repetidas não são aceitas." FontSize="12" Foreground="{DynamicResource BrandMutedText}" TextWrapping="Wrap"/>
+                        </StackPanel>
+                        <TextBlock Text="Arquivos de saída" FontWeight="SemiBold"/>
+                        <Grid ColumnDefinitions="Auto,*,Auto,Auto">
+                            <TextBlock Text="Pasta" VerticalAlignment="Center" Margin="0,0,12,0"/>
+                            <TextBox Grid.Column="1" Text="{Binding SplitOutputDirectory}" IsReadOnly="True" FontSize="12"/>
+                            <Button Grid.Column="2" Content="📂 Alterar" Command="{Binding SelectSplitOutputFolderCommand}" IsEnabled="{Binding !IsSplitting}" Margin="8,0,0,0"/>
+                            <Button Grid.Column="3" Content="↗ Abrir" Command="{Binding OpenSplitOutputFolderCommand}" Margin="8,0,0,0"/>
+                        </Grid>
+                        <Grid ColumnDefinitions="Auto,*">
+                            <TextBlock Text="Prefixo" VerticalAlignment="Center" Margin="0,0,12,0"/>
+                            <TextBox Grid.Column="1" Text="{Binding SplitOutputPrefix}" Watermark="Ex.: contrato-pagina" IsEnabled="{Binding !IsSplitting}"/>
+                        </Grid>
+                        <TextBlock Text="Exemplo: contrato-pagina-1.pdf, contrato-pagina-2.pdf" IsVisible="{Binding !IsSplitByRanges}" FontSize="12" Foreground="{DynamicResource BrandMutedText}"/>
+                        <TextBlock Text="Exemplo: contrato-pagina-parte-1-3.pdf, contrato-pagina-parte-5.pdf" IsVisible="{Binding IsSplitByRanges}" FontSize="12" Foreground="{DynamicResource BrandMutedText}"/>
+                    </StackPanel>
+
+                    <Grid Grid.Row="3" ColumnDefinitions="*,Auto" Margin="0,6,0,0">
+                        <TextBlock Text="{Binding SplitStatusMessage}" VerticalAlignment="Center" Foreground="{DynamicResource BrandMutedText}" TextWrapping="Wrap" Margin="0,0,14,0"/>
+                        <Button Grid.Column="1" Content="✂️ Dividir PDF" Command="{Binding SplitPdfCommand}" IsEnabled="{Binding CanSplit}" IsVisible="{Binding !IsSplitting}" FontWeight="Bold" Padding="18,10"/>
+                        <Button Grid.Column="1" Content="⏳ Dividindo PDF... (cancelar)" Command="{Binding CancelSplitCommand}" IsVisible="{Binding IsSplitting}" FontWeight="Bold" Padding="18,10"/>
+                    </Grid>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- COMPRESSÃO E CONVERSÃO -->
+        <Grid IsVisible="{Binding IsWorkspace}" RowDefinitions="Auto,Auto,Auto,Auto,Auto,*,Auto" Margin="16">
         <!-- IDENTIDADE -->
         <Border Grid.Row="0" Classes="card" Background="{DynamicResource BrandGreenSoft}" Margin="0,0,0,10">
-            <Grid ColumnDefinitions="*,Auto">
-                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Spacing="12">
+            <Grid ColumnDefinitions="Auto,Auto,*,Auto">
+                <Button Content="← Início" Command="{Binding GoHomeCommand}" VerticalAlignment="Center" Padding="12,7" Margin="0,0,12,0"/>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Spacing="12">
                     <Border Width="48" Height="48" CornerRadius="10" Background="White" Padding="4">
                         <Image Source="/Assets/favcon CmW.png" Stretch="Uniform"/>
                     </Border>
@@ -46,7 +218,11 @@
                         <TextBlock Text="Compressão de arquivos" FontSize="13" Foreground="{DynamicResource BrandMutedText}"/>
                     </StackPanel>
                 </StackPanel>
-                <Button Grid.Column="1" Content="Sobre" VerticalAlignment="Center" Padding="16,7" Click="AboutButton_OnClick"/>
+                <StackPanel Grid.Column="2" VerticalAlignment="Center" Margin="16,0,0,0">
+                    <TextBlock Text="{Binding PageTitle}" FontSize="21" FontWeight="Bold"/>
+                    <TextBlock Text="Processamento local, sem envio para servidores" FontSize="13" Foreground="{DynamicResource BrandMutedText}"/>
+                </StackPanel>
+                <Button Grid.Column="3" Content="Sobre" VerticalAlignment="Center" Padding="16,7" Click="AboutButton_OnClick"/>
             </Grid>
         </Border>
 
@@ -55,9 +231,9 @@
             <Grid ColumnDefinitions="Auto,*">
                 <TextBlock Text="Presets" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,16,0"/>
                 <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
-                    <Button Classes="preset" Content="🌐 Web Ideal (80%)" Command="{Binding ApplyPresetCommand}" CommandParameter="Web" ToolTip.Tip="Padrão: 80% e até 1920x1080"/>
+                    <Button Classes="preset" Content="🌐 Web Ideal (80%)" Command="{Binding ApplyPresetCommand}" CommandParameter="Web" ToolTip.Tip="Padrão: 80%, mantendo a resolução original"/>
                     <Button Classes="preset" Content="💎 Alta Qualidade (90%)" Command="{Binding ApplyPresetCommand}" CommandParameter="HighQuality"/>
-                    <Button Classes="preset" Content="🎯 Sem Perdas" Command="{Binding ApplyPresetCommand}" CommandParameter="Lossless"/>
+                    <Button Classes="preset" Content="🎯 Sem Perdas / Não comprimir" Command="{Binding ApplyPresetCommand}" CommandParameter="Lossless"/>
                     <Button Classes="preset" Content="📦 Máx. Compressão (60%)" Command="{Binding ApplyPresetCommand}" CommandParameter="MaxCompression"/>
                 </StackPanel>
             </Grid>
@@ -186,10 +362,11 @@
                     </StackPanel>
                 </StackPanel>
                 <StackPanel Grid.Column="3" VerticalAlignment="Center">
-                    <Button Content="⚡ Iniciar Compressão" Command="{Binding StartConversionCommand}" IsEnabled="{Binding CanStart}" IsVisible="{Binding !IsProcessing}" FontWeight="Bold" Padding="20,12" CornerRadius="8" FontSize="14"/>
-                    <Button Content="⏹ Cancelar" Command="{Binding CancelConversionCommand}" IsVisible="{Binding IsProcessing}" FontWeight="Bold" Padding="20,12" CornerRadius="8" FontSize="14"/>
+                    <Button Content="{Binding StartProcessingButtonText}" Command="{Binding StartConversionCommand}" IsEnabled="{Binding CanStart}" IsVisible="{Binding !IsProcessing}" FontWeight="Bold" Padding="20,12" CornerRadius="8" FontSize="14"/>
+                    <Button Content="{Binding ProcessingButtonText}" Command="{Binding CancelConversionCommand}" IsVisible="{Binding IsProcessing}" FontWeight="Bold" Padding="20,12" CornerRadius="8" FontSize="14"/>
                 </StackPanel>
             </Grid>
         </Border>
+        </Grid>
     </Grid>
 </Window>

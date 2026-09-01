@@ -3,7 +3,7 @@ set -euo pipefail
 
 APP_NAME="compressmyweb"
 DISPLAY_NAME="CompressMyWeb"
-VERSION="1.5.1"
+VERSION="1.6.0"
 ARCH="amd64"
 OUTPUT_DIR="dist"
 BUILD_ROOT="${OUTPUT_DIR}/deb-offline-build"

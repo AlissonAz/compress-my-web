@@ -4,7 +4,7 @@ Unicode True
 
 !define APP_NAME "Compress my Web"
 !define APP_EXE "CompressMyWeb.exe"
-!define APP_VERSION "1.5.1"
+!define APP_VERSION "1.6.0"
 !define COMPANY_NAME "Alisson Azevedo"
 
 Name "${APP_NAME}"
@@ -15,7 +15,7 @@ RequestExecutionLevel admin
 SetCompressor /SOLID lzma
 Icon "Assets\favcon-CmW.ico"
 UninstallIcon "Assets\favcon-CmW.ico"
-VIProductVersion "1.5.1.0"
+VIProductVersion "1.6.0.0"
 VIAddVersionKey "ProductName" "${APP_NAME}"
 VIAddVersionKey "CompanyName" "${COMPANY_NAME}"
 VIAddVersionKey "LegalCopyright" "Copyright © 2026 Alisson Azevedo"
@@ -49,7 +49,7 @@ Section "Aplicativo" SecMain
 
     SetOutPath "$INSTDIR\sources"
     File "dist\windows-dependencies\sources\ghostscript-10.07.1.tar.xz"
-    File "dist\windows-dependencies\sources\compress-my-web-1.5.1.tar.gz"
+    File "dist\windows-dependencies\sources\compress-my-web-1.6.0.tar.gz"
 
     SetOutPath "$INSTDIR"
 
