@@ -4,6 +4,12 @@ O **Compress my Web** é um aplicativo desktop gratuito e de código aberto para
 
 Todos os arquivos são processados localmente, no computador do usuário. O aplicativo não envia documentos, imagens, estatísticas ou telemetria para servidores externos.
 
+## Interface do aplicativo
+
+Escolha a ferramenta desejada na tela inicial: comprimir, converter, unir PDF ou dividir PDF.
+
+![Tela inicial do Compress my Web, com as opções Comprimir, Converter, Unir PDF e Dividir PDF](docs/screenshots/tela-inicial.png)
+
 **Palavras-chave:** compressor de imagens, compressor de PDF, reduzir tamanho de PDF, converter JPG para WebP, converter PNG para WebP, converter imagem para PDF, unir PDF, juntar PDF, mesclar PDF, dividir PDF, separar páginas de PDF, editor de PDF offline, ferramenta de imagem para web.
 
 ## O que o programa faz
