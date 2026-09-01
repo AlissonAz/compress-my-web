@@ -58,6 +58,8 @@ Ao abrir o programa, escolha uma ferramenta na tela inicial: **Comprimir**, **Co
 
 O preset Web mantém a resolução original. Para reduzir largura e altura, abra **Opções** e marque **Limitar resolução**.
 
+![Tela de compressão de imagens e PDF, com presets, formato de saída, pasta de destino e fila de arquivos](docs/screenshots/tela-comprimir.png)
+
 ### Converter imagens
 
 1. Clique em **Converter**.
@@ -85,6 +87,8 @@ Se já existir um arquivo com o mesmo nome, o programa preserva o original e cri
 4. Escolha pasta, prefixo dos arquivos e clique em **Dividir PDF**.
 
 No modo por página, o resultado será semelhante a `documento-pagina-1.pdf`. No modo por intervalos, `1-3,5` gera `documento-parte-1-3.pdf` e `documento-parte-5.pdf`.
+
+![Tela para dividir PDF, com seleção de arquivo, modo por página ou intervalos, pasta de destino e prefixo](docs/screenshots/tela-dividirpdf.png)
 
 ## Arquivos de saída e privacidade
 
