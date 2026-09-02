@@ -3,7 +3,7 @@ set -euo pipefail
 
 APP_NAME="compressmyweb"
 DISPLAY_NAME="CompressMyWeb"
-VERSION="1.6.1"
+VERSION="1.6.2"
 ARCH="amd64"
 OUTPUT_DIR="dist"
 BUILD_ROOT="${OUTPUT_DIR}/deb-offline-build"
@@ -80,12 +80,20 @@ Description: Compressor e conversor de arquivos em lote (offline)
  CompressMyWeb é uma aplicação desktop desenvolvida em C# para comprimir e
  converter arquivos sequencial em lote, com ferramentas PDF incluídas.
 CONTROL_EOF
+cat > "${BUILD_ROOT}/DEBIAN/postinst" << 'POSTINST_EOF'
+#!/bin/sh
+set -e
+command -v gtk-update-icon-cache >/dev/null 2>&1 && gtk-update-icon-cache -q -t -f /usr/share/icons/hicolor || true
+command -v update-desktop-database >/dev/null 2>&1 && update-desktop-database -q /usr/share/applications || true
+exit 0
+POSTINST_EOF
 cat > "${BUILD_ROOT}/usr/share/applications/${APP_NAME}.desktop" << DESKTOP_EOF
 [Desktop Entry]
 Name=${DISPLAY_NAME}
 Comment=Conversor de imagens e compressor estrutural de PDFs
 Exec=/usr/bin/${APP_NAME}
 Icon=${APP_NAME}
+StartupWMClass=CompressMyWeb
 Terminal=false
 Type=Application
 Categories=Graphics;Photography;Utility;
@@ -103,5 +111,6 @@ find "${BUILD_ROOT}/usr/bin" "${BUILD_ROOT}/usr/lib/${APP_NAME}" -type f -exec c
 find "${BUILD_ROOT}/usr/share/${APP_NAME}/sources" "${BUILD_ROOT}/usr/share/doc/${APP_NAME}" -type d -exec chmod 755 {} +
 find "${BUILD_ROOT}/usr/share/${APP_NAME}/sources" "${BUILD_ROOT}/usr/share/doc/${APP_NAME}" -type f -exec chmod 644 {} +
 chmod 755 "${BUILD_ROOT}/DEBIAN"
+chmod 755 "${BUILD_ROOT}/DEBIAN/postinst"
 dpkg-deb --build "${BUILD_ROOT}" "${DEB_PACKAGE}"
 echo "Pacote offline gerado: ${DEB_PACKAGE}"

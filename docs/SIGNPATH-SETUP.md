@@ -43,8 +43,8 @@ No seu repositório no GitHub (`github.com/AlissonAz/compress-my-web`):
 Quando você criar uma nova tag de versão e enviá-la ao GitHub:
 
 ```bash
-git tag v1.6.1
-git push origin v1.6.1
+git tag v1.6.2
+git push origin v1.6.2
 ```
 
 O workflow do GitHub Actions em `.github/workflows/release.yml` irá:

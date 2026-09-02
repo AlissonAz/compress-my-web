@@ -27,17 +27,17 @@ Escolha a ferramenta desejada na tela inicial: comprimir, converter, unir PDF ou
 
 ### Windows 10 e Windows 11
 
-1. Baixe `CompressMyWeb-Setup-1.6.1-win-x64.exe` (ou o pacote portátil `.zip`) na página de [Releases](https://github.com/AlissonAz/compress-my-web/releases).
+1. Baixe `CompressMyWeb-Setup-1.6.2-win-x64.exe` (ou o pacote portátil `.zip`) na página de [Releases](https://github.com/AlissonAz/compress-my-web/releases).
 2. Execute o instalador e siga os passos na tela.
 3. Abra o programa pelo atalho na Área de Trabalho ou no Menu Iniciar.
 
 ### Linux (Debian, Ubuntu, Linux Mint)
 
-1. Baixe `compressmyweb_1.6.1_amd64.deb` na página de [Releases](https://github.com/AlissonAz/compress-my-web/releases).
+1. Baixe `compressmyweb_1.6.2_amd64.deb` na página de [Releases](https://github.com/AlissonAz/compress-my-web/releases).
 2. Abra um terminal na pasta do arquivo baixado e instale o pacote:
 
 ```bash
-sudo apt install ./compressmyweb_1.6.1_amd64.deb
+sudo apt install ./compressmyweb_1.6.2_amd64.deb
 ```
 
 O pacote instala as dependências necessárias, incluindo `qpdf` e Ghostscript. Depois, abra **CompressMyWeb** pelo menu de aplicativos.

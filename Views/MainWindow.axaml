@@ -4,7 +4,8 @@
         mc:Ignorable="d" d:DesignWidth="1100" d:DesignHeight="760" x:Class="CompressMyWeb.Views.MainWindow"
         x:DataType="vm:MainViewModel" Icon="/Assets/favcon CmW.png"
         Title="Compress my Web — Compressão de arquivos" Width="1100" Height="760" MinWidth="900" MinHeight="650"
-        CanResize="True"
+        CanResize="True" CanMaximize="True" CanMinimize="True"
+        SystemDecorations="Full" ExtendClientAreaToDecorationsHint="False"
         WindowStartupLocation="CenterScreen" Background="#F4F7F4" Foreground="#171A17">
     <Window.Resources>
         <SolidColorBrush x:Key="BrandGreenDark">#008F1F</SolidColorBrush>

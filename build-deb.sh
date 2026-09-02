@@ -3,7 +3,7 @@ set -e
 
 APP_NAME="compressmyweb"
 DISPLAY_NAME="CompressMyWeb"
-VERSION="1.6.1"
+VERSION="1.6.2"
 ARCH="amd64"
 OUTPUT_DIR="dist"
 BUILD_ROOT="${OUTPUT_DIR}/deb-build"
@@ -37,6 +37,15 @@ Description: Compressor e conversor de arquivos em lote
  converter arquivos sequencial em lote.
 CONTROL_EOF
 
+# Atualizar os caches do menu e dos ícones após instalar ou atualizar o pacote.
+cat << 'POSTINST_EOF' > "${BUILD_ROOT}/DEBIAN/postinst"
+#!/bin/sh
+set -e
+command -v gtk-update-icon-cache >/dev/null 2>&1 && gtk-update-icon-cache -q -t -f /usr/share/icons/hicolor || true
+command -v update-desktop-database >/dev/null 2>&1 && update-desktop-database -q /usr/share/applications || true
+exit 0
+POSTINST_EOF
+
 # Arquivo .desktop para o menu do Linux Mint
 cat << DESKTOP_EOF > "${BUILD_ROOT}/usr/share/applications/${APP_NAME}.desktop"
 [Desktop Entry]
@@ -44,6 +53,7 @@ Name=${DISPLAY_NAME}
 Comment=Conversor de imagens e compressor estrutural de PDFs
 Exec=/usr/bin/${APP_NAME}
 Icon=${APP_NAME}
+StartupWMClass=CompressMyWeb
 Terminal=false
 Type=Application
 Categories=Graphics;Photography;Utility;
@@ -61,6 +71,7 @@ cp SECURITY.md "${BUILD_ROOT}/usr/share/doc/${APP_NAME}/SECURITY.md"
 echo "=== 3. Ajustando permissões ==="
 chmod -R 755 "${BUILD_ROOT}/usr"
 chmod 755 "${BUILD_ROOT}/DEBIAN"
+chmod 755 "${BUILD_ROOT}/DEBIAN/postinst"
 chmod 755 "${BUILD_ROOT}/usr/lib/${APP_NAME}/CompressMyWeb"
 
 echo "=== 4. Gerando pacote .deb ==="
