@@ -3,7 +3,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="1100" d:DesignHeight="760" x:Class="CompressMyWeb.Views.MainWindow"
         x:DataType="vm:MainViewModel" Icon="/Assets/favcon CmW.png"
-        Title="Compress my Web — Compressão de arquivos" Width="1100" Height="760" MinWidth="900" MinHeight="650"
+        Title="Compress my Web — Compressão de arquivos" Width="1100" Height="680" MinWidth="820" MinHeight="520"
         CanResize="True" CanMaximize="True" CanMinimize="True"
         SystemDecorations="Full" ExtendClientAreaToDecorationsHint="False"
         WindowStartupLocation="CenterScreen" Background="#F4F7F4" Foreground="#171A17">
@@ -37,7 +37,10 @@
 
     <Grid>
         <!-- TELA INICIAL -->
-        <Grid IsVisible="{Binding IsHome}" Margin="32" HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="760">
+        <ScrollViewer IsVisible="{Binding IsHome}"
+                      HorizontalScrollBarVisibility="Disabled"
+                      VerticalScrollBarVisibility="Auto">
+        <Grid Margin="24" HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="760">
             <Border Classes="card" Padding="42" Background="{DynamicResource BrandSurface}">
                 <StackPanel Spacing="28">
                     <StackPanel HorizontalAlignment="Center" Spacing="10">
@@ -77,6 +80,7 @@
                 </StackPanel>
             </Border>
         </Grid>
+        </ScrollViewer>
 
         <!-- UNIR PDF -->
         <Grid IsVisible="{Binding IsMergePage}" RowDefinitions="Auto,Auto,*,Auto" Margin="24">
@@ -145,7 +149,10 @@
         </Grid>
 
         <!-- DIVIDIR PDF -->
-        <Grid IsVisible="{Binding IsFeaturePlaceholder}" Margin="32" HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="620">
+        <ScrollViewer IsVisible="{Binding IsFeaturePlaceholder}"
+                      HorizontalScrollBarVisibility="Disabled"
+                      VerticalScrollBarVisibility="Auto">
+        <Grid Margin="24" HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="620">
             <Border Classes="card" Padding="36">
                 <Grid RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="16">
                     <Grid ColumnDefinitions="Auto,*,Auto">
@@ -204,6 +211,7 @@
                 </Grid>
             </Border>
         </Grid>
+        </ScrollViewer>
 
         <!-- COMPRESSÃO E CONVERSÃO -->
         <Grid IsVisible="{Binding IsWorkspace}" RowDefinitions="Auto,Auto,Auto,Auto,Auto,*,Auto" Margin="16">
