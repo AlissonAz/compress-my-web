@@ -124,7 +124,7 @@ dotnet run
 bash build-deb.sh
 ```
 
-### Gerar instalador Windows offline
+### Gerar instalador e versão portátil Windows offline
 
 Pré-requisitos: `curl`, `7z` e NSIS (`nsis` e `nsis-common`).
 
@@ -132,7 +132,7 @@ Pré-requisitos: `curl`, `7z` e NSIS (`nsis` e `nsis-common`).
 bash build-windows.sh
 ```
 
-O script baixa versões fixadas de `qpdf` e Ghostscript, confere seus hashes SHA-256 e inclui essas dependências no instalador Windows.
+O script baixa versões fixadas de `qpdf` e Ghostscript, confere seus hashes SHA-256 e gera tanto o instalador executável (`.exe`) quanto o pacote portátil descompactável (`.zip`).
 
 ## Segurança, licença e dependências
 

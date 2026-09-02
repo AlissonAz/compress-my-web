@@ -53,12 +53,23 @@ Section "Aplicativo" SecMain
 
     SetOutPath "$INSTDIR"
 
-    DetailPrint "Preparando componentes para compressão de PDF..."
-    ExecWait '"$INSTDIR\tools\ghostscript\vcredist_x64.exe" /install /quiet /norestart' $0
-    ${If} $0 != 0
-    ${AndIf} $0 != 1638
-    ${AndIf} $0 != 3010
-        MessageBox MB_OK|MB_ICONEXCLAMATION "Não foi possível preparar o componente Microsoft Visual C++ (código $0). A instalação continuará, mas a compressão de PDF pode exigir reparo do componente."
+    ; Verificar se o Microsoft Visual C++ 2015-2022 (x64) já está instalado no Windows
+    SetRegView 64
+    ReadRegDWORD $0 HKLM "SOFTWARE\Microsoft\VisualStudio\14.0\VC\Runtimes\X64" "Installed"
+    SetRegView 32
+
+    ${If} $0 != 1
+        DetailPrint "Instalando componente Microsoft Visual C++ (x64)..."
+        ${If} ${FileExists} "$INSTDIR\tools\ghostscript\vcredist_x64.exe"
+            ExecWait '"$INSTDIR\tools\ghostscript\vcredist_x64.exe" /install /passive /norestart' $1
+            ${If} $1 != 0
+            ${AndIf} $1 != 1638
+            ${AndIf} $1 != 3010
+                DetailPrint "Aviso: Microsoft Visual C++ finalizou com código $1."
+            ${EndIf}
+        ${EndIf}
+    ${Else}
+        DetailPrint "Microsoft Visual C++ já detectado no sistema."
     ${EndIf}
 
     WriteUninstaller "$INSTDIR\Desinstalar.exe"

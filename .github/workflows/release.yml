@@ -1,0 +1,123 @@
+name: Release Build and Sign
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-linux:
+    name: Build Linux Packages (.deb)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Install build tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y dpkg-dev p7zip-full
+
+      - name: Build standard DEB
+        run: bash build-deb.sh
+
+      - name: Build offline DEB
+        run: bash build-deb-offline.sh
+
+      - name: Upload Linux Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-packages
+          path: dist/*.deb
+
+  build-windows:
+    name: Build Windows (Installer & Portable)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Install NSIS and 7z
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y nsis p7zip-full curl
+
+      - name: Build Windows Packages
+        run: bash build-windows.sh
+
+      - name: Upload Windows Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-packages
+          path: |
+            dist/*.exe
+            dist/*.zip
+
+  sign-windows:
+    name: Sign Windows Artifacts with SignPath
+    needs: build-windows
+    runs-on: windows-latest
+    if: "${{ secrets.SIGNPATH_API_TOKEN != '' }}"
+    steps:
+      - name: Download Windows Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: windows-packages
+          path: unsigned
+
+      - name: Submit signing request to SignPath
+        uses: SignPath/github-action-submit-signing-request@v1
+        with:
+          api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
+          org-id: ${{ vars.SIGNPATH_ORGANIZATION_ID }}
+          project-slug: ${{ vars.SIGNPATH_PROJECT_SLUG || 'compress-my-web' }}
+          signing-policy-slug: ${{ vars.SIGNPATH_POLICY_SLUG || 'release-signing' }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          file-path: 'unsigned/*.exe'
+          output-artifact-directory: 'signed'
+          wait-for-completion: true
+
+      - name: Upload Signed Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-signed-packages
+          path: signed/*
+
+  publish-release:
+    name: Publish GitHub Release
+    needs: [build-linux, build-windows]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: release-artifacts
+
+      - name: Prepare Release Assets
+        run: |
+          mkdir -p release-files
+          find release-artifacts -type f \( -name "*.deb" -o -name "*.exe" -o -name "*.zip" \) -exec cp {} release-files/ \;
+          ls -la release-files/
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: release-files/*
+          generate_release_notes: true
+          draft: false
+          prerelease: false

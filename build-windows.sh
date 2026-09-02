@@ -73,12 +73,32 @@ dotnet publish CompressMyWeb.csproj \
 
 echo "=== 3. Gerando instalador Windows offline ==="
 if ! command -v "${NSIS_EXECUTABLE}" >/dev/null 2>&1 && [[ ! -x "${NSIS_EXECUTABLE}" ]]; then
-  echo "Erro: makensis não encontrado. Instale o pacote 'nsis' ou informe NSIS_BIN."
-  exit 1
+  echo "Aviso: makensis não encontrado. O instalador NSIS não foi gerado. Instale o pacote 'nsis' ou informe NSIS_BIN."
+else
+  "${NSIS_EXECUTABLE}" installer-windows.nsi
+  echo " Instalador gerado em: ${INSTALLER}"
 fi
 
-"${NSIS_EXECUTABLE}" installer-windows.nsi
+echo "=== 4. Gerando pacote portátil (.zip) para Windows ==="
+PORTABLE_ROOT="dist/portable"
+PORTABLE_APP_DIR="${PORTABLE_ROOT}/CompressMyWeb"
+PORTABLE_ZIP="dist/CompressMyWeb-v${APP_VERSION}-win-x64-portable.zip"
 
+rm -rf "${PORTABLE_ROOT}" "${PORTABLE_ZIP}"
+mkdir -p "${PORTABLE_APP_DIR}"
+cp -a "${PUBLISH_DIR}/." "${PORTABLE_APP_DIR}/"
+mkdir -p "${PORTABLE_APP_DIR}/tools/qpdf" "${PORTABLE_APP_DIR}/tools/ghostscript"
+cp -a "${DEPENDENCIES_DIR}/qpdf/." "${PORTABLE_APP_DIR}/tools/qpdf/"
+cp -a "${DEPENDENCIES_DIR}/ghostscript/." "${PORTABLE_APP_DIR}/tools/ghostscript/"
+cp LICENSE "${PORTABLE_APP_DIR}/"
+cp README.md "${PORTABLE_APP_DIR}/"
+cp THIRD-PARTY-NOTICES.md "${PORTABLE_APP_DIR}/"
+cp SECURITY.md "${PORTABLE_APP_DIR}/"
+
+(cd "${PORTABLE_ROOT}" && 7z a -tzip -mx=9 "../CompressMyWeb-v${APP_VERSION}-win-x64-portable.zip" "CompressMyWeb") >/dev/null
+rm -rf "${PORTABLE_ROOT}"
+
+echo " Pacote portátil gerado em: ${PORTABLE_ZIP}"
 echo "=========================================================="
-echo " Instalador gerado em: ${INSTALLER}"
+echo " Build para Windows concluído com sucesso!"
 echo "=========================================================="
