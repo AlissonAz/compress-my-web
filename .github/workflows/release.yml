@@ -27,17 +27,15 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y dpkg-dev p7zip-full
 
-      - name: Build standard DEB
+      - name: Build Linux DEB
         run: bash build-deb.sh
 
-      - name: Build offline DEB
-        run: bash build-deb-offline.sh
-
-      - name: Upload Linux Artifacts
+      - name: Upload Linux Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: linux-packages
-          path: dist/*.deb
+          name: linux-package
+          path: dist/compressmyweb_*_amd64.deb
+          if-no-files-found: error
 
   build-windows:
     name: Build Windows (Installer & Portable)
@@ -64,25 +62,29 @@ jobs:
         with:
           name: windows-packages
           path: |
-            dist/*.exe
-            dist/*.zip
+            dist/CompressMyWeb-Setup-*-win-x64.exe
+            dist/CompressMyWeb-v*-win-x64-portable.zip
+          if-no-files-found: error
 
   sign-windows:
     name: Sign Windows Artifacts with SignPath
     needs: build-windows
     runs-on: windows-latest
-    if: "${{ secrets.SIGNPATH_API_TOKEN != '' }}"
+    env:
+      SIGNPATH_API_TOKEN: ${{ secrets.SIGNPATH_API_TOKEN }}
     steps:
       - name: Download Windows Artifacts
+        if: env.SIGNPATH_API_TOKEN != ''
         uses: actions/download-artifact@v4
         with:
           name: windows-packages
           path: unsigned
 
       - name: Submit signing request to SignPath
+        if: env.SIGNPATH_API_TOKEN != ''
         uses: SignPath/github-action-submit-signing-request@v1
         with:
-          api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
+          api-token: ${{ env.SIGNPATH_API_TOKEN }}
           org-id: ${{ vars.SIGNPATH_ORGANIZATION_ID }}
           project-slug: ${{ vars.SIGNPATH_PROJECT_SLUG || 'compress-my-web' }}
           signing-policy-slug: ${{ vars.SIGNPATH_POLICY_SLUG || 'release-signing' }}
@@ -92,14 +94,16 @@ jobs:
           wait-for-completion: true
 
       - name: Upload Signed Artifacts
+        if: env.SIGNPATH_API_TOKEN != ''
         uses: actions/upload-artifact@v4
         with:
           name: windows-signed-packages
           path: signed/*
+          if-no-files-found: error
 
   publish-release:
     name: Publish GitHub Release
-    needs: [build-linux, build-windows]
+    needs: [build-linux, build-windows, sign-windows]
     runs-on: ubuntu-latest
     steps:
       - name: Download all artifacts
@@ -108,9 +112,33 @@ jobs:
           path: release-artifacts
 
       - name: Prepare Release Assets
+        shell: bash
         run: |
+          set -euo pipefail
           mkdir -p release-files
-          find release-artifacts -type f \( -name "*.deb" -o -name "*.exe" -o -name "*.zip" \) -exec cp {} release-files/ \;
+
+          mapfile -t deb_files < <(find release-artifacts/linux-package -type f -name "*.deb")
+          mapfile -t portable_files < <(find release-artifacts/windows-packages -type f -name "*-portable.zip")
+          mapfile -t unsigned_installer_files < <(find release-artifacts/windows-packages -type f -name "*.exe")
+
+          if [ "${#deb_files[@]}" -ne 1 ] || [ "${#portable_files[@]}" -ne 1 ] || [ "${#unsigned_installer_files[@]}" -ne 1 ]; then
+            echo "Erro: o release deve conter exatamente um .deb, um instalador .exe e um portátil .zip."
+            exit 1
+          fi
+
+          cp "${deb_files[0]}" "${portable_files[0]}" release-files/
+
+          if [ -d release-artifacts/windows-signed-packages ]; then
+            mapfile -t signed_installer_files < <(find release-artifacts/windows-signed-packages -type f -name "*.exe")
+            if [ "${#signed_installer_files[@]}" -ne 1 ]; then
+              echo "Erro: era esperado exatamente um instalador Windows assinado."
+              exit 1
+            fi
+            cp "${signed_installer_files[0]}" release-files/
+          else
+            cp "${unsigned_installer_files[0]}" release-files/
+          fi
+
           ls -la release-files/
 
       - name: Create Release

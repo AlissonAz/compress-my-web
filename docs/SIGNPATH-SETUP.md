@@ -43,12 +43,12 @@ No seu repositório no GitHub (`github.com/AlissonAz/compress-my-web`):
 Quando você criar uma nova tag de versão e enviá-la ao GitHub:
 
 ```bash
-git tag v1.6.0
-git push origin v1.6.0
+git tag v1.6.1
+git push origin v1.6.1
 ```
 
 O workflow do GitHub Actions em `.github/workflows/release.yml` irá:
-1. Compilar os pacotes Linux (`.deb` padrão e offline).
+1. Compilar o pacote Linux (`.deb`).
 2. Compilar o Instalador Windows (`.exe`) e o pacote portátil (`.zip`).
 3. Enviar o `.exe` para o SignPath.io assinar digitalmente.
-4. Anexar todos os arquivos (assinados e testados) diretamente na aba **Releases** do repositório.
+4. Anexar exatamente esses três arquivos diretamente na aba **Releases** do repositório.
